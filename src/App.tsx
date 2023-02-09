@@ -1,17 +1,9 @@
 import React, { useState } from "react";
-import menu from "./fileStructure";
-import "./styles.css";
-
-// Define an interface for the Node object
-interface Node {
-  title: string;
-  type: "file" | "directory";
-  children?: Node[];
-}
+import menu, {FileStructure} from "./fileStructure";
 
 const App = () => {
   // Use the useState hook to store the file structure as state
-  const [structure, setStructure] = useState<Node[]>(menu);
+  const [structure, setStructure] = useState<FileStructure[]>(menu);
 
   // Use the useState hook to store the selected paths as state
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
@@ -29,13 +21,13 @@ const App = () => {
     return false;
   };
 
-  // Function to add children of a node to the selected paths
+  // Function to add children of a FileStructure to the selected paths
   const addChildren = (
-    children: Node[],
+    children: FileStructure[],
     prefix: string,
     newSelectedPaths: string[]
   ) => {
-    // Loop through all the children of the node
+    // Loop through all the children of the FileStructure
     children.forEach((child, index) => {
       // Add the child's path to the selected paths
       newSelectedPaths.push(`${prefix}/${child.title}`);
@@ -51,7 +43,7 @@ const App = () => {
   };
 
   // Function to handle checkbox change events
-  const handleCheckboxChange = (node: Node, path: string) => {
+  const handleCheckboxChange = (node: FileStructure, path: string) => {
     let newSelectedPaths: string[];
     // If the path is already selected
     if (isPathSelected(path)) {
@@ -60,12 +52,12 @@ const App = () => {
         (p: string) => !p.startsWith(path)
       );
     } else {
-      // If the node is a file
+      // If the FileStructure is a file
       if (node.type === "file") {
         // Add the path to the selected paths
         newSelectedPaths = [...selectedPaths, path];
       } else {
-        // If the node is a directory
+        // If the FileStructure is a directory
         newSelectedPaths = [...selectedPaths];
         // If the directory has children, add them to the selected paths
         if (node.children) {
@@ -78,9 +70,9 @@ const App = () => {
     setSelectedPaths(newSelectedPaths);
   };
 
-  // Function to render nodes
-  const renderNode = (node: Node, parentTitle: string) => {
-    // If the node is a file
+  // Function to render FileStructures
+  const renderFileStructure = (node: FileStructure, parentTitle: string) => {
+    // If the FileStructure is a file
     if (node.type === "file") {
       return (
         <li key={node.title}>
@@ -96,7 +88,7 @@ const App = () => {
         </li>
       );
     }
-    // If the node is a directory
+    // If the FileStructure is a directory
     if (node.type === "directory") {
       return (
         <li key={node.title}>
@@ -110,10 +102,10 @@ const App = () => {
           />
           {node.title}
           <ul>
-            {/* Render the children nodes */}
+            {/* Render the children FileStructures */}
             {node.children &&
               node.children.map((child) =>
-                renderNode(child, `${parentTitle}/${node.title}`)
+                renderFileStructure(child, `${parentTitle}/${node.title}`)
               )}
           </ul>
         </li>
@@ -125,7 +117,7 @@ const App = () => {
   return (
     <div>
       {/* Render the file structure as a list */}
-      <ul>{structure.map((node) => renderNode(node, ""))}</ul>
+      <ul>{structure.map((node) => renderFileStructure(node, ""))}</ul>
       {/* Display the selected paths */}
       <div>
         Selected Paths:

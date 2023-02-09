@@ -1,4 +1,4 @@
-interface FileStructure {
+export interface FileStructure {
   title: string;
   type: "directory" | "file";
   children?: FileStructure[];
